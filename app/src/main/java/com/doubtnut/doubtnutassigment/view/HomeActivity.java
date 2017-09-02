@@ -18,6 +18,7 @@ import com.doubtnut.doubtnutassigment.R;
 import com.doubtnut.doubtnutassigment.model.CountryData;
 import com.doubtnut.doubtnutassigment.network_connection.NetworkService;
 import com.doubtnut.doubtnutassigment.presenter.HomePresenter;
+import com.doubtnut.doubtnutassigment.storage.ReadWriteDataFromLocal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +34,24 @@ public class HomeActivity extends BaseActivity implements IHomeView {
     private ProgressBar mProgressBar;
     private HomeAdapter mAdapter;
     private HomePresenter mPresenter;
+    private List<CountryData> mCountryDataList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getDaggerInjector().inject(this);
         renderView();
+        setUpData();
         init();
-        mPresenter = new HomePresenter(mNetworkService, this);
-        mPresenter.getCountryDataList();
+    }
+
+    private void setUpData() {
+        if(ReadWriteDataFromLocal.getCountrysData(this) != null){
+            mCountryDataList = ReadWriteDataFromLocal.getCountrysData(this);
+        }else {
+            mPresenter = new HomePresenter(mNetworkService, this);
+            mPresenter.getCountryDataList();
+        }
     }
 
     public void renderView() {
@@ -58,7 +68,7 @@ public class HomeActivity extends BaseActivity implements IHomeView {
 
     public void init() {
         mListRv.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new HomeAdapter(this, new ArrayList<CountryData>(),
+        mAdapter = new HomeAdapter(this, mCountryDataList,
                 new HomeAdapter.OnItemClickListener() {
                     @Override
                     public void onClick(CountryData countryData) {
@@ -91,6 +101,7 @@ public class HomeActivity extends BaseActivity implements IHomeView {
     @Override
     public void getCountryDataList(List<CountryData> countryResponse) {
          if(mAdapter != null){
+             ReadWriteDataFromLocal.writeCountrysData(countryResponse, HomeActivity.this);
              mAdapter.updateCountryDataList(countryResponse);
          }
     }
