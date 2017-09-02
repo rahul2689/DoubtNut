@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Doubt Nut</string>
+    <string name="action_settings">Settings</string>
+    <string name="toast_msg_country"> Country​ ​ selected​ ​ is​ </string>
+    <string name="toast_msg_capital">​ and​ ​ it’s​ ​ capital​ ​ is​</string>
+    <string name="home_text">This is the sample application to show countries listing and by clicking on row you can get capital of that Country!</string>
+</resources>
